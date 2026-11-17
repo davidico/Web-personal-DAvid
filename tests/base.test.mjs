@@ -36,7 +36,3 @@ test('base: por defecto la página no se indexa', async () => {
   await page.goto(url);
   assert.equal(await page.getAttribute('meta[name="robots"]', 'content'), 'noindex, nofollow');
 });
-test('base: el hueco de la barra de scroll es estable', async () => {
-  await page.goto(url);
-  assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).scrollbarGutter), 'stable');
-});

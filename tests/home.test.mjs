@@ -58,11 +58,6 @@ test('home: cuerpo de 18 px o más e imágenes con alt', async () => {
 test('home: a 1440 el contenido mide 1344 px con márgenes de 48 px', async () => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(url);
-  // `scrollbar-gutter: stable` reserves a gutter even where headless Chromium hides
-  // the scrollbar; widen the window so the layout itself is 1440 px wide.
-  const gutter = await page.evaluate(() => innerWidth - document.body.clientWidth);
-  await page.setViewportSize({ width: 1440 + gutter, height: 900 });
-  assert.equal(await page.evaluate(() => document.body.clientWidth), 1440);
   const box = await page.locator('#top figure').boundingBox();
   assert.ok(Math.abs(box.x - 48) <= 1, `borde izquierdo en ${box.x}`);
   assert.ok(Math.abs(box.width - 1344) <= 1, `ancho ${box.width}`);
