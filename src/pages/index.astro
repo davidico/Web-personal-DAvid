@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+---
+
+<Base
+  title="David Cueva · Webflow & JavaScript expert"
+  description="David Cueva, Webflow & JavaScript expert in Berlin. You bring your business. I make it live."
+>
+  <header class="wrap site-header">
+    <a href="/" aria-label="David Cueva, home" class="home-link"><Logo /></a>
+  </header>
+</Base>
+
+<style>
+  .site-header {
+    display: flex;
+    align-items: center;
+    min-height: 80px;
+  }
+  .home-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    text-decoration: none;
+  }
+</style>

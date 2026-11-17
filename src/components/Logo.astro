@@ -1,0 +1,39 @@
+---
+interface Props {
+  /** Text size in px. */
+  size?: number;
+}
+
+const { size = 24 } = Astro.props;
+---
+
+<span class="logo" style={`font-size:${size}px`}>
+  <span class="first">David</span>
+  <span class="last">Cueva</span>
+  <span class="dot" aria-hidden="true"></span>
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.15em;
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .first {
+    font-weight: 500;
+  }
+  .last {
+    font-weight: 600;
+    color: var(--petrol);
+  }
+  .dot {
+    width: 0.3em;
+    height: 0.3em;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+</style>
