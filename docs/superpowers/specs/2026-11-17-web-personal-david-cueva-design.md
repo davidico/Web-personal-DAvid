@@ -130,17 +130,16 @@ El diseño estático debe verse bien aunque un clip no salga: cada vídeo tiene 
 
 Orden de trabajo (decisión de Claude): primero se construye la home completa con las fotos reales de David como imágenes fijas y con huecos marcados donde irán los clips. Después se generan los clips uno a uno, la propietaria da el visto bueno a cada uno y se integran. Las seis fotos de David que entregó la propietaria (cinco de estudio en 16:9 y una vertical pequeña) se guardarán en el repositorio al empezar a construir.
 
-## 9. Cómo se construye (decisiones de Claude, no acordadas)
+## 9. Cómo se construye
 
-La propietaria habló de resultados, no de herramientas. Estas decisiones son de Claude y se pueden cambiar:
+Decidido por la propietaria: código a mano con Astro, no en Webflow.
 
-- Web estática escrita a mano en este repositorio (HTML, CSS y JavaScript con Vite), no en Webflow. Motivo: la secuencia de scroll con fotogramas en un lienzo y la entrada del círculo necesitan control fino del código, y el prompt original pedía lanzarla en local.
+Decisiones de Claude, que se pueden cambiar:
+
 - GSAP con ScrollTrigger para las animaciones ligadas al scroll y Lenis para el scroll suave.
 - Los clips se convierten en secuencias de fotogramas para moverlos con el scroll.
-- Alojamiento en Cloudflare Pages, ya conectado al entorno. Permitirá añadir después la función de servidor que guarde la clave de la IA del chat.
+- Alojamiento en Cloudflare Pages, ya conectado al entorno. Astro tiene adaptador para Cloudflare, lo que permitirá añadir después la función de servidor que guarde la clave de la IA del chat.
 - Alcance de esta entrega: la home funcionando en local y en una dirección de vista previa para que la propietaria la revise. El lanzamiento público con dominio propio es un paso posterior y queda bloqueado hasta tener los textos del Impressum y de privacidad.
-
-Pregunta abierta para la propietaria: código a mano o Webflow. David se presenta como experto en Webflow, y construirla allí cambiaría todo el plan.
 
 ## 10. Pendiente de la propietaria
 
