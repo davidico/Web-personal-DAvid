@@ -35,11 +35,18 @@ async function intro(url, width, lighting) {
     await page.evaluate(() => document.fonts.ready);
     if (lighting) {
       await page.click('#intro-switch');
-      await page.evaluate(() => {
-        const [anim] = document.getElementById('intro').getAnimations();
+      const problem = await page.evaluate(() => {
+        const [anim] = document.getElementById('intro')?.getAnimations() ?? [];
+        if (!anim) return 'no animation found on #intro after clicking the switch';
+        const duration = anim.effect?.getTiming().duration;
+        if (typeof duration !== 'number' || !Number.isFinite(duration)) {
+          return `the #intro animation has no numeric duration (got ${String(duration)})`;
+        }
         anim.pause();
-        anim.currentTime = Number(anim.effect.getTiming().duration) / 2;
+        anim.currentTime = duration / 2;
+        return null;
       });
+      if (problem) throw new Error(`intro-lighting-${width}: ${problem}`);
     }
     const name = lighting ? 'intro-lighting' : 'intro-dark';
     await page.screenshot({ path: `${out}${name}-${width}.png` });

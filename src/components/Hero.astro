@@ -2,10 +2,12 @@
 import MediaSlot from './MediaSlot.astro';
 import hero from '../assets/david/hero.jpg';
 import { site } from '../data/site';
+// Keep "· Berlin" together when the kicker wraps.
+const role = site.role.replace(' · ', '\u00a0·\u00a0');
 ---
 
 <section id="top" class="hero">
-  <span class="role">{site.role}</span>
+  <span class="role">{role}</span>
   <h1 data-split aria-label={site.headline.join(' ')}>{site.headline[0]}<br />{site.headline[1]}</h1>
   <MediaSlot
     image={hero}

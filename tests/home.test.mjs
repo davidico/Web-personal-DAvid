@@ -55,3 +55,15 @@ test('home: cuerpo de 18 px o más e imágenes con alt', async () => {
   assert.equal(small, 0);
   assert.equal(await page.locator('img:not([alt])').count(), 0);
 });
+test('home: a 1440 el contenido mide 1344 px con márgenes de 48 px', async () => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(url);
+  const box = await page.locator('#top figure').boundingBox();
+  assert.ok(Math.abs(box.x - 48) <= 1, `borde izquierdo en ${box.x}`);
+  assert.ok(Math.abs(box.width - 1344) <= 1, `ancho ${box.width}`);
+});
+test('home: "· Berlin" no se separa en la etiqueta', async () => {
+  await page.goto(url);
+  const role = await page.locator('#top .role').textContent();
+  assert.ok(role.includes(' · Berlin'), `etiqueta: ${JSON.stringify(role)}`);
+});

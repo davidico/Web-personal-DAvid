@@ -4,7 +4,7 @@ A one-page personal website for David Cueva, Webflow & JavaScript expert in Berl
 
 ## Requirements
 
-- Node.js 22.23.4 or newer (what Astro asks for).
+- Node.js 22 or newer.
 - The tests drive a real browser with [Playwright](https://playwright.dev) and Chromium installed **globally**, not as a project dependency. Install them once with `npm install -g playwright && npx playwright install chromium` if your machine does not have them.
 
 ## Commands
