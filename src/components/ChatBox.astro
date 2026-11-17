@@ -1,0 +1,162 @@
+---
+const chips = ['Contact', 'Portfolio', 'What if I need photos?'];
+---
+
+<h2>Ask me anything.</h2>
+<form class="card" data-chat>
+  <div class="head">
+    <div class="name"><span class="dot" aria-hidden="true"></span>David's AI assistant</div>
+    <span class="mono">AI · coming soon</span>
+  </div>
+  <div class="thread">
+    <p class="bubble">
+      Hi, I'm David's AI. Ask me about websites, photos, video or how we would work together.
+    </p>
+  </div>
+  <div class="chips">
+    {chips.map((c) => <button type="button" data-chip>{c}</button>)}
+  </div>
+  <div class="ask">
+    <label for="chat-q" class="sr-only">Your question</label>
+    <input id="chat-q" name="q" type="text" placeholder="Ask anything" autocomplete="off" />
+    <button type="submit" class="send" aria-label="Send question">
+      <svg
+        aria-hidden="true"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 19V5"></path>
+        <path d="M5 12l7-7 7 7"></path>
+      </svg>
+    </button>
+  </div>
+</form>
+<span class="mono">or continue scrolling</span>
+
+<script is:inline>
+  document.querySelector('form[data-chat]')?.addEventListener('submit', (e) => e.preventDefault());
+</script>
+
+<style>
+  h2 {
+    font-size: clamp(40px, 5.6vw, 80px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-align: center;
+  }
+  .card {
+    width: 100%;
+    max-width: 960px;
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    padding: clamp(20px, 2.4vw, 28px);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    background: var(--bg);
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .mono {
+    font-family: 'Geist Mono Variable', ui-monospace, monospace;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .thread {
+    min-height: 160px;
+    display: flex;
+    align-items: flex-start;
+  }
+  .bubble {
+    max-width: 560px;
+    padding: 18px 22px;
+    border-radius: 22px;
+    background: var(--bg-soft);
+    font-size: 19px;
+    line-height: 1.45;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .chips button {
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid var(--petrol);
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--petrol);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .ask {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  input {
+    flex: 1;
+    min-width: 0;
+    min-height: 56px;
+    padding: 0 22px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg-gray);
+    font-size: 18px;
+    color: var(--ink);
+  }
+  input::placeholder {
+    color: var(--ink-2);
+  }
+  .send {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--petrol);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .send:hover {
+    background: var(--petrol-hover);
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+</style>

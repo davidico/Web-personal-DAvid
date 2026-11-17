@@ -20,6 +20,7 @@ test('home: secciones y titulares en orden', async () => {
   assert.deepEqual(hs.map(t => t.replace(/\s+/g, ' ').trim()), [
     'You bring your business. I make it live.',
     'Everything tailored to your needs.',
+    'Ask me anything.',
     'Web development', 'Photo shoots', 'Video editing',
     'Selected work',
     "Let's build yours.",

@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
 import Story from '../components/Story.astro';
+import ChatBox from '../components/ChatBox.astro';
 import Services from '../components/Services.astro';
 import Work from '../components/Work.astro';
 import Finale from '../components/Finale.astro';
@@ -17,10 +18,22 @@ import Footer from '../components/Footer.astro';
   <main class="wrap">
     <Hero />
     <Story />
-    <section id="chat"></section>
+    <section id="chat" class="chat">
+      <ChatBox />
+    </section>
     <Services />
     <Work />
     <Finale />
   </main>
   <Footer />
 </Base>
+
+<style>
+  .chat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding-top: clamp(104px, 13vw, 160px);
+  }
+</style>
