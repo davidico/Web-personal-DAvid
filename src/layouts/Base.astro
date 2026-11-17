@@ -32,9 +32,21 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         try {
           seen = localStorage.getItem('dc-intro-seen');
         } catch (e) {}
-        if (!matchMedia('(prefers-reduced-motion: reduce)').matches && seen === null && !location.hash) {
-          document.documentElement.classList.add('intro');
-        }
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches || seen !== null || location.hash) return;
+        var root = document.documentElement;
+        root.classList.add('intro');
+        // Failsafe: if intro.ts never starts (bundle missing or broken), light the page
+        // shortly after its 4 s auto-light would have, so nobody is left on a dark screen.
+        setTimeout(function () {
+          if (root.hasAttribute('data-intro-started')) return;
+          root.classList.remove('intro', 'intro-lighting');
+          var held = document.querySelectorAll('[data-intro-inert]');
+          for (var i = 0; i < held.length; i++) {
+            held[i].removeAttribute('inert');
+            held[i].removeAttribute('data-intro-inert');
+          }
+          document.dispatchEvent(new Event('intro:done'));
+        }, 5000);
       })();
     </script>
   </head>

@@ -85,3 +85,52 @@ test('intro: funciona si localStorage lanza errores', async () => {
     await browser.close();
   }
 });
+test('intro: Espacio en el interruptor enciende', async () => {
+  await page.goto(url);
+  assert.equal(await page.evaluate(() => document.activeElement.id), 'intro-switch');
+  await page.keyboard.press(' ');
+  await page.waitForFunction(() => !document.documentElement.classList.contains('intro'));
+});
+test('intro: Tab no sale del interruptor mientras está a oscuras', async () => {
+  await page.goto(url);
+  for (let i = 0; i < 3; i++) {
+    await page.keyboard.press('Tab');
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'intro-switch');
+  }
+  await page.click('#intro-switch');
+  await page.waitForFunction(() => !document.documentElement.classList.contains('intro'));
+  assert.equal(await page.locator('[inert]').count(), 0);
+});
+// A listener added at DOMContentLoaded stands in for any later script.
+const listenLate = () => {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('intro:done', () => { window.__done = (window.__done || 0) + 1; });
+  });
+};
+test('intro: intro:done llega a quien escucha en DOMContentLoaded (visita repetida)', async () => {
+  await page.addInitScript(() => localStorage.setItem('dc-intro-seen', '1'));
+  await page.addInitScript(listenLate);
+  await page.goto(url);
+  await page.waitForFunction(() => window.__done === 1, null, { timeout: 2000 });
+  assert.equal(await dark(page), false);
+});
+test('intro: intro:done llega a quien escucha en DOMContentLoaded (tras encender)', async () => {
+  await page.addInitScript(listenLate);
+  await page.goto(url);
+  await page.click('#intro-switch');
+  await page.waitForFunction(() => window.__done === 1);
+});
+test('intro: si el módulo no carga, la página acaba iluminada', async () => {
+  await page.route(url, async route => {
+    const res = await route.fetch();
+    const html = (await res.text()).replace(/<script type="module"[^>]*>[\s\S]*?<\/script>/g, '');
+    await route.fulfill({ response: res, body: html });
+  });
+  await page.goto(url);
+  assert.equal(await page.evaluate(() => document.querySelector('script[type="module"]')), null);
+  assert.equal(await dark(page), true);
+  await page.waitForFunction(() => !document.documentElement.classList.contains('intro'), null, { timeout: 8000 });
+  assert.equal(await page.locator('#intro').isVisible(), false);
+  assert.equal(await page.evaluate(() => getComputedStyle(document.body).overflow), 'visible');
+  assert.equal(await page.locator('[inert]').count(), 0);
+});
