@@ -10,10 +10,14 @@ import Intro from '../components/Intro.astro';
 interface Props {
   title: string;
   description: string;
+  /** Show the "turn on the light" intro (home page only). */
+  intro?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, intro = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+// Preview and staging builds stay out of search engines unless PUBLIC_INDEXABLE=true.
+const indexable = import.meta.env.PUBLIC_INDEXABLE === 'true';
 ---
 
 <!doctype html>
@@ -26,32 +30,50 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#2f5d62" />
+    {!indexable && <meta name="robots" content="noindex, nofollow" />}
     <script is:inline>
       (function () {
-        var seen = null;
-        try {
-          seen = localStorage.getItem('dc-intro-seen');
-        } catch (e) {}
-        if (matchMedia('(prefers-reduced-motion: reduce)').matches || seen !== null || location.hash) return;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         var root = document.documentElement;
-        root.classList.add('intro');
-        // Failsafe: if intro.ts never starts (bundle missing or broken), light the page
-        // shortly after its 4 s auto-light would have, so nobody is left on a dark screen.
+        // Hides the kinetic headline until motion.ts has split it, so it never paints
+        // whole first. Only JavaScript sets this, so without it the headline shows.
+        root.classList.add('motion-pending');
+        // Failsafe: if motion.ts never takes over, show the headline anyway.
         setTimeout(function () {
-          if (root.hasAttribute('data-intro-started')) return;
-          root.classList.remove('intro', 'intro-lighting');
-          var held = document.querySelectorAll('[data-intro-inert]');
-          for (var i = 0; i < held.length; i++) {
-            held[i].removeAttribute('inert');
-            held[i].removeAttribute('data-intro-inert');
-          }
-          document.dispatchEvent(new Event('intro:done'));
-        }, 5000);
+          root.classList.remove('motion-pending');
+        }, 3000);
       })();
     </script>
+    {
+      intro && (
+        <script is:inline>
+          (function () {
+            var seen = null;
+            try {
+              seen = localStorage.getItem('dc-intro-seen');
+            } catch (e) {}
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches || seen !== null || location.hash) return;
+            var root = document.documentElement;
+            root.classList.add('intro');
+            // Failsafe: if intro.ts never starts (bundle missing or broken), light the page
+            // shortly after its 4 s auto-light would have, so nobody is left on a dark screen.
+            setTimeout(function () {
+              if (root.hasAttribute('data-intro-started')) return;
+              root.classList.remove('intro', 'intro-lighting');
+              var held = document.querySelectorAll('[data-intro-inert]');
+              for (var i = 0; i < held.length; i++) {
+                held[i].removeAttribute('inert');
+                held[i].removeAttribute('data-intro-inert');
+              }
+              document.dispatchEvent(new Event('intro:done'));
+            }, 5000);
+          })();
+        </script>
+      )
+    }
   </head>
   <body>
-    <Intro />
+    {intro && <Intro />}
     <slot />
     <script>
       import { initMotion } from '../scripts/motion';

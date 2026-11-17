@@ -134,3 +134,57 @@ test('intro: si el módulo no carga, la página acaba iluminada', async () => {
   assert.equal(await page.evaluate(() => getComputedStyle(document.body).overflow), 'visible');
   assert.equal(await page.locator('[inert]').count(), 0);
 });
+test('intro: tras DOMContentLoaded, intro:done no espera a load', async () => {
+  // Hold images and fonts so `load` stays pending well past the click.
+  await page.route(/\.(webp|woff2?)$/, async route => {
+    await new Promise(r => setTimeout(r, 5000));
+    try { await route.continue(); } catch { /* page already closed */ }
+  });
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    document.addEventListener('intro:done', () => { window.__doneState = document.readyState; });
+  });
+  await page.click('#intro-switch');
+  await page.waitForFunction(() => window.__doneState, null, { timeout: 1500 });
+  assert.notEqual(await page.evaluate(() => window.__doneState), 'complete');
+});
+test('intro: un clic en la zona oscura enciende', async () => {
+  await page.goto(url);
+  await page.mouse.click(12, 12);
+  await page.waitForFunction(() => !document.documentElement.classList.contains('intro'), null, { timeout: 2000 });
+});
+test('intro: Escape enciende', async () => {
+  await page.goto(url);
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(() => !document.documentElement.classList.contains('intro'), null, { timeout: 2000 });
+});
+test('intro: Enter fuera del interruptor enciende', async () => {
+  await page.goto(url);
+  await page.evaluate(() => document.activeElement.blur());
+  assert.notEqual(await page.evaluate(() => document.activeElement.id), 'intro-switch');
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => !document.documentElement.classList.contains('intro'), null, { timeout: 2000 });
+});
+for (const key of ['PageUp', 'Home', 'End']) {
+  test(`intro: ${key} enciende`, async () => {
+    await page.goto(url);
+    await page.keyboard.press(key);
+    await page.waitForFunction(() => !document.documentElement.classList.contains('intro'), null, { timeout: 2000 });
+  });
+}
+test('intro: si la animación de luz no termina, la página se ilumina igual', async () => {
+  await page.goto(url);
+  await page.click('#intro-switch');
+  await page.evaluate(() => document.getElementById('intro').getAnimations().forEach(a => a.pause()));
+  await page.waitForFunction(() => !document.documentElement.classList.contains('intro'), null, { timeout: 2000 });
+  assert.equal(await page.locator('[inert]').count(), 0);
+});
+for (const p of ['impressum', 'privacy']) {
+  test(`intro: la primera visita a /${p} entra iluminada y sin intro`, async () => {
+    await page.goto(url + p);
+    await page.waitForLoadState('load');
+    assert.equal(await dark(page), false);
+    assert.equal(await page.locator('#intro').count(), 0);
+    assert.equal(await page.evaluate(() => localStorage.getItem('dc-intro-seen')), null);
+  });
+}

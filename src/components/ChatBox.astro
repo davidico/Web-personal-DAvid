@@ -13,6 +13,7 @@ const chips = ['Contact', 'Portfolio', 'What if I need photos?'];
       Hi, I'm David's AI. Ask me about websites, photos, video or how we would work together.
     </p>
   </div>
+  <p class="notice" aria-live="polite" data-chat-notice></p>
   <div class="chips">
     {chips.map((c) => <button type="button" data-chip>{c}</button>)}
   </div>
@@ -40,7 +41,22 @@ const chips = ['Contact', 'Portfolio', 'What if I need photos?'];
 <span class="mono">or continue scrolling</span>
 
 <script is:inline>
-  document.querySelector('form[data-chat]')?.addEventListener('submit', (e) => e.preventDefault());
+  (function () {
+    var form = document.querySelector('form[data-chat]');
+    var notice = form && form.querySelector('[data-chat-notice]');
+    if (!form || !notice) return;
+    // No assistant yet: never send anything, just say so.
+    var tell = function () {
+      notice.textContent = "The assistant isn't live yet. For now, use the contact button below.";
+    };
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      tell();
+    });
+    form.querySelectorAll('[data-chip]').forEach(function (chip) {
+      chip.addEventListener('click', tell);
+    });
+  })();
 </script>
 
 <style>
@@ -99,6 +115,14 @@ const chips = ['Contact', 'Portfolio', 'What if I need photos?'];
     background: var(--bg-soft);
     font-size: 19px;
     line-height: 1.45;
+  }
+  .notice {
+    font-size: 18px;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .notice:empty {
+    display: none;
   }
   .chips {
     display: flex;

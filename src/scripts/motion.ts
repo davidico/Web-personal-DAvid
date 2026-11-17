@@ -52,7 +52,7 @@ function bindAnchors(lenis: Lenis): void {
     const target = document.getElementById(id);
     if (!target) return;
     e.preventDefault();
-    history.pushState(null, '', link.hash);
+    if (location.hash !== link.hash) history.pushState(null, '', link.hash);
     // Like a native fragment jump, move the sequential-focus start to the target.
     lenis.scrollTo(target, {
       onComplete: () => {
@@ -66,22 +66,48 @@ function bindAnchors(lenis: Lenis): void {
   });
 }
 
+/** Puts back everything the setup hid, so a failure never leaves content invisible. */
+function showAll(els: HTMLElement[]): void {
+  try {
+    gsap.killTweensOf(els);
+  } catch {
+    // gsap itself is broken: the inline styles below are all that matter
+  }
+  for (const el of els) {
+    el.style.removeProperty('opacity');
+    el.style.removeProperty('transform');
+    el.style.removeProperty('translate');
+  }
+  document.documentElement.classList.remove('motion-pending');
+}
+
 export function initMotion(): void {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  gsap.registerPlugin(ScrollTrigger);
+  const root = document.documentElement;
+  let letters: HTMLElement[] = [];
+  let reveals: HTMLElement[] = [];
 
-  // The script sets the hidden starting state, so without JavaScript all is visible.
-  const headline = document.querySelector<HTMLElement>('[data-split]');
-  const letters = headline ? splitLetters(headline) : [];
-  const reveals = gsap.utils.toArray<HTMLElement>('[data-reveal]');
-  gsap.set(letters, { yPercent: 60, opacity: 0 });
-  gsap.set(reveals, { y: 40, opacity: 0 });
+  try {
+    gsap.registerPlugin(ScrollTrigger);
 
-  // Wait for the intro: before it, the page is dark and its own wheel/touch/key
-  // triggers must reach intro.ts untouched by Lenis.
-  document.addEventListener(
-    'intro:done',
-    () => {
+    // The script sets the hidden starting state, so without JavaScript all is visible.
+    // The <head> script's `motion-pending` keeps the headline hidden until it is split;
+    // if that failsafe already showed it whole, leave it whole rather than flash it.
+    const headline = root.classList.contains('motion-pending')
+      ? document.querySelector<HTMLElement>('[data-split]')
+      : null;
+    letters = headline ? splitLetters(headline) : [];
+    reveals = gsap.utils.toArray<HTMLElement>('[data-reveal]');
+    gsap.set(letters, { yPercent: 60, opacity: 0 });
+    gsap.set(reveals, { y: 40, opacity: 0 });
+    root.classList.remove('motion-pending');
+  } catch (err) {
+    showAll([...letters, ...reveals]);
+    throw err;
+  }
+
+  const start = () => {
+    try {
       const lenis = new Lenis();
       lenis.on('scroll', ScrollTrigger.update);
       gsap.ticker.add((time) => lenis.raf(time * 1000));
@@ -106,7 +132,15 @@ export function initMotion(): void {
           scrollTrigger: { trigger: el, start: 'top 90%', once: true },
         });
       }
-    },
-    { once: true },
-  );
+    } catch (err) {
+      showAll([...letters, ...reveals]);
+      throw err;
+    }
+  };
+
+  // On the home page, wait for the intro: before it, the page is dark and its own
+  // wheel/touch/key triggers must reach intro.ts untouched by Lenis. Pages without
+  // the intro (#intro is not rendered) start at once.
+  if (document.getElementById('intro')) document.addEventListener('intro:done', start, { once: true });
+  else start();
 }

@@ -37,3 +37,22 @@ test('chat: Enter no recarga ni envía nada', async () => {
   assert.deepEqual(reqs, []);
   assert.equal(new URL(page.url()).search, '');
 });
+const NOTICE = "The assistant isn't live yet. For now, use the contact button below.";
+test('chat: enviar muestra el aviso', async () => {
+  await page.goto(url);
+  const live = page.locator('#chat [aria-live="polite"]');
+  assert.equal(await live.count(), 1);
+  assert.equal((await live.innerText()).trim(), '');
+  await page.getByLabel('Your question').fill('hello');
+  await page.keyboard.press('Enter');
+  assert.equal((await live.innerText()).trim(), NOTICE);
+  assert.equal(await live.isVisible(), true);
+  assert.ok(parseFloat(await live.evaluate(e => getComputedStyle(e).fontSize)) >= 18);
+});
+test('chat: una sugerencia muestra el aviso', async () => {
+  await page.goto(url);
+  await page.locator('[data-chip]').nth(1).click();
+  const live = page.locator('#chat [aria-live="polite"]');
+  assert.equal((await live.innerText()).trim(), NOTICE);
+  assert.equal(await live.isVisible(), true);
+});

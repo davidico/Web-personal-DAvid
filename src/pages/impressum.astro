@@ -1,39 +1,11 @@
 ---
-import Base from '../layouts/Base.astro';
-import Logo from '../components/Logo.astro';
+import Legal from '../layouts/Legal.astro';
 ---
 
-<Base title="Impressum · David Cueva" description="Impressum of David Cueva, Webflow & JavaScript expert in Berlin.">
-  <header class="wrap legal-header">
-    <a href="/" aria-label="David Cueva, home" class="home-link"><Logo /></a>
-  </header>
-  <main class="wrap legal">
-    <h1>Impressum</h1>
-    <p>[Legal text pending]</p>
-  </main>
-</Base>
-
-<style>
-  .legal-header {
-    padding-block: 24px;
-  }
-  .home-link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    text-decoration: none;
-  }
-  .legal {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    padding-top: 80px;
-    padding-bottom: 120px;
-  }
-  h1 {
-    font-size: clamp(44px, 6.6vw, 96px);
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.045em;
-  }
-</style>
+<Legal
+  title="Impressum · David Cueva"
+  description="Impressum of David Cueva, Webflow & JavaScript expert in Berlin."
+  heading="Impressum"
+>
+  <p>[Legal text pending]</p>
+</Legal>

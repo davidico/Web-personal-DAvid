@@ -82,7 +82,12 @@ test('motion: activar Work con el teclado lleva el foco a la sección', async ()
   await page.keyboard.press('Enter');
   await page.waitForFunction(() => document.activeElement === document.querySelector('#work'), null, { timeout: 5000 });
   await page.keyboard.press('Tab');
-  assert.equal(await page.evaluate(() => !!document.activeElement.closest('#work')), true);
+  // Project cards are not links yet, so the next stop is the first control after #work.
+  assert.equal(await page.evaluate(() => {
+    const work = document.querySelector('#work');
+    return !!(work.compareDocumentPosition(document.activeElement) & Node.DOCUMENT_POSITION_FOLLOWING)
+      || work.contains(document.activeElement);
+  }), true);
 });
 test('motion: un ancla con % mal formado no lanza errores', async () => {
   await page.goto(url);
@@ -98,4 +103,72 @@ test('motion: un ancla con % mal formado no lanza errores', async () => {
   });
   await page.waitForTimeout(200);
   assert.deepEqual(errors, []);
+});
+test('motion: en una visita repetida el titular no se pinta antes de partirse', async () => {
+  const { page: p, browser } = await newPage({ seen: true });
+  try {
+    await p.route(/\/_astro\/.*\.js$/, async route => {
+      await new Promise(r => setTimeout(r, 1500));
+      try { await route.continue(); } catch { /* page already closed */ }
+    });
+    await p.goto(url, { waitUntil: 'commit' });
+    await p.waitForSelector('h1', { state: 'attached' });
+    const first = await p.evaluate(() => {
+      const h = document.querySelector('h1');
+      return { split: !!h.querySelector('.split-letter'), visibility: getComputedStyle(h).visibility };
+    });
+    assert.deepEqual(first, { split: false, visibility: 'hidden' });
+    await p.waitForFunction(() => {
+      const ls = [...document.querySelectorAll('[data-split] .split-letter')];
+      return ls.length > 0 && ls.every(e => getComputedStyle(e).opacity === '1')
+        && getComputedStyle(document.querySelector('h1')).visibility === 'visible';
+    }, null, { timeout: 6000 });
+  } finally {
+    await browser.close();
+  }
+});
+test('motion: si el módulo de movimiento no carga, el titular aparece tras el failsafe', async () => {
+  const { page: p, browser } = await newPage({ seen: true });
+  try {
+    await p.route(/\/_astro\/.*\.js$/, route => route.abort());
+    await p.goto(url);
+    await p.waitForFunction(() => getComputedStyle(document.querySelector('h1')).visibility === 'visible'
+      && !document.documentElement.classList.contains('motion-pending'), null, { timeout: 5000 });
+  } finally {
+    await browser.close();
+  }
+});
+test('motion: pulsar dos veces el mismo ancla no duplica el historial', async () => {
+  await page.goto(url);
+  await page.waitForFunction(() => document.documentElement.classList.contains('lenis'), null, { timeout: 3000 });
+  const n0 = await page.evaluate(() => history.length);
+  await page.click('header a[href="#work"]');
+  await page.waitForFunction(() => location.hash === '#work');
+  await page.click('header a[href="#work"]');
+  await page.waitForTimeout(200);
+  assert.equal(await page.evaluate(() => history.length), n0 + 1);
+});
+test('motion: si la puesta en marcha falla, nada queda oculto', async () => {
+  const { page: p, browser } = await newPage({ seen: true });
+  try {
+    // Lenis listens for `scrollend` on window; make that throw inside the setup.
+    await p.addInitScript(() => {
+      const add = window.addEventListener;
+      window.addEventListener = function (type, ...rest) {
+        if (type === 'scrollend') throw new Error('boom');
+        return add.call(this, type, ...rest);
+      };
+    });
+    await p.goto(url);
+    await p.waitForTimeout(800);
+    const state = await p.evaluate(() => ({
+      pending: document.documentElement.classList.contains('motion-pending'),
+      h1: getComputedStyle(document.querySelector('h1')).visibility,
+      hidden: [...document.querySelectorAll('[data-reveal], [data-split] .split-letter')]
+        .filter(e => parseFloat(getComputedStyle(e).opacity) < 1).length,
+    }));
+    assert.deepEqual(state, { pending: false, h1: 'visible', hidden: 0 });
+  } finally {
+    await browser.close();
+  }
 });

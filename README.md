@@ -18,6 +18,15 @@ A one-page personal website for David Cueva, Webflow & JavaScript expert in Berl
 | `npm test` | Build, then run the browser tests in `tests/`. |
 | `npm run review:shots` | Build, then save review screenshots to `docs/review/` (not part of `npm test`). |
 
+## Build settings
+
+Two environment variables control the build:
+
+| Variable | Default | What it does |
+| --- | --- | --- |
+| `SITE_URL` | `https://example.com` | The deployed origin, used for canonical URLs. Set it to the real domain, e.g. `SITE_URL=https://www.your-domain.de npm run build`. |
+| `PUBLIC_INDEXABLE` | unset | Every page carries `<meta name="robots" content="noindex, nofollow">` so preview deploys stay out of search engines. Set `PUBLIC_INDEXABLE=true` only for the production build. |
+
 ## Where content lives
 
 All texts and links are in `src/data/site.ts`: headline, statement, services, projects, social links and the contact link. Photos are in `src/assets/david/`. Text still waiting for the owner is written in square brackets, for example `[One-line pitch]`.

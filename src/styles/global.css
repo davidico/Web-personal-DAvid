@@ -11,6 +11,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* The intro hides the scrollbar; keep its gutter so nothing shifts when it ends. */
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -47,6 +49,12 @@ a {
   max-width: 1344px;
   margin-inline: auto;
   padding-inline: clamp(20px, 3.4vw, 48px);
+}
+
+/* Kinetic headline: hidden only while the <head> script's `motion-pending` is set,
+   so it never paints whole before motion.ts splits it. */
+html.motion-pending [data-split] {
+  visibility: hidden;
 }
 
 /* Kinetic headline: motion.ts wraps each letter; words never break apart. */

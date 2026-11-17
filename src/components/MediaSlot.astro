@@ -14,16 +14,19 @@ interface Props {
   radius?: number;
   /** `sizes` attribute for the optimized image. */
   sizes?: string;
+  /** Above-the-fold image: load it eagerly and first. */
+  priority?: boolean;
 }
 
-const { image, alt, ratio, clip, tone = 'soft', radius = 28, sizes = '100vw' } = Astro.props;
+const { image, alt, ratio, clip, tone = 'soft', radius = 28, sizes = '100vw', priority = false } = Astro.props;
+const loading = priority ? { loading: 'eager' as const, fetchpriority: 'high' as const } : {};
 ---
 
 <figure
   class:list={['slot', tone, { 'has-image': image }]}
   style={`aspect-ratio:${ratio};border-radius:${radius}px`}
 >
-  {image && <Image src={image} alt={alt} widths={[640, 1024, 1440, 2000]} sizes={sizes} />}
+  {image && <Image src={image} alt={alt} widths={[640, 1024, 1440, 2000]} sizes={sizes} {...loading} />}
   {clip && <figcaption class="clip" data-clip-slot>{clip}</figcaption>}
 </figure>
 
@@ -68,5 +71,17 @@ const { image, alt, ratio, clip, tone = 'soft', radius = 28, sizes = '100vw' } =
     border-radius: 999px;
     background: var(--bg);
     color: var(--ink);
+  }
+  /* On phones the label stays one short line so it does not cover the photo. */
+  @media (max-width: 599px) {
+    .has-image {
+      padding: 12px;
+    }
+    .has-image .clip {
+      padding: 6px 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 </style>

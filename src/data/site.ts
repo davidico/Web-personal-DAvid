@@ -12,7 +12,8 @@ export const services: { n: string; title: string; line: string }[] = [
   { n: '03', title: 'Video editing', line: 'Edits and short clips that make a website move.' },
 ];
 
-export const projects: { slug: string; name: string; pitch: string }[] = [
+/** `url` is optional: until a project has one, its card is not a link. */
+export const projects: { slug: string; name: string; pitch: string; url?: string }[] = [
   { slug: 'prezenti', name: 'Prezenti', pitch: 'Website design · Webflow development' },
   { slug: 'jade-energy', name: 'Jade Energy', pitch: '[One-line pitch]' },
   { slug: 'com-create', name: 'com-create', pitch: '[One-line pitch]' },
