@@ -1,0 +1,54 @@
+---
+import MediaSlot from './MediaSlot.astro';
+import { site } from '../data/site';
+
+const frames = ['He opens the laptop.', 'The screen fills the page.', 'Your website appears.'];
+---
+
+<section id="story" class="story">
+  <h2>{site.statement}</h2>
+  <div class="frames">
+    {
+      frames.map((caption) => (
+        <div class="frame">
+          <MediaSlot alt="" ratio="4 / 5" clip="Clip 02 · frame" />
+          <p>{caption}</p>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .story {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-top: clamp(96px, 12vw, 140px);
+  }
+  h2 {
+    max-width: 1000px;
+    font-size: clamp(40px, 5.6vw, 80px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .frames {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .frame {
+    flex: 1 1 300px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  p {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+</style>

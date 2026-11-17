@@ -1,0 +1,49 @@
+---
+import { services } from '../data/site';
+---
+
+<section id="services" class="services">
+  {
+    services.map((s) => (
+      <div class="service">
+        <span class="n">{s.n}</span>
+        <h2>{s.title}</h2>
+        <p>{s.line}</p>
+      </div>
+    ))
+  }
+</section>
+
+<style>
+  .services {
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+    padding-top: clamp(104px, 13vw, 160px);
+  }
+  .service {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 16px 40px;
+  }
+  .n {
+    width: 48px;
+    font-family: 'Geist Mono Variable', ui-monospace, monospace;
+    font-size: 16px;
+    color: var(--petrol);
+  }
+  h2 {
+    flex: 1 1 520px;
+    min-width: 0;
+    font-size: clamp(44px, 6.6vw, 96px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+  p {
+    flex: 1 1 320px;
+    font-size: 20px;
+    line-height: 1.45;
+  }
+</style>

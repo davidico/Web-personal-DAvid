@@ -1,0 +1,56 @@
+---
+import { site } from '../data/site';
+---
+
+<section id="contact" class="finale">
+  <h2>Let's build yours.</h2>
+  <div class="actions">
+    <a href={site.contactHref} class="btn primary">Start a project</a>
+    <a href="#chat" class="btn secondary">Ask the AI first</a>
+  </div>
+</section>
+
+<style>
+  .finale {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding-top: clamp(112px, 14vw, 180px);
+  }
+  h2 {
+    font-size: clamp(52px, 8.6vw, 124px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 56px;
+    padding: 0 30px;
+    border-radius: 999px;
+    font-size: 19px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .primary {
+    background: var(--petrol);
+    color: var(--bg);
+  }
+  .primary:hover {
+    background: var(--petrol-hover);
+  }
+  .secondary {
+    border: 1px solid var(--petrol);
+    color: var(--petrol);
+  }
+  .secondary:hover {
+    border-color: var(--petrol-hover);
+    color: var(--petrol-hover);
+  }
+</style>

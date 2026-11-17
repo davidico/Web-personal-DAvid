@@ -1,0 +1,64 @@
+---
+import MediaSlot from './MediaSlot.astro';
+import { projects } from '../data/site';
+
+// Alternate the placeholder tones as in the mockup: gray, soft, soft, gray.
+const tones = ['gray', 'soft', 'soft', 'gray'] as const;
+---
+
+<section id="work" class="work">
+  <h2>Selected work</h2>
+  <div class="grid">
+    {
+      projects.map((p, i) => (
+        <a href="#work" class="project" data-project={p.slug}>
+          <MediaSlot alt="" ratio="16 / 10" tone={tones[i % tones.length]} clip={`[${p.name} site, animated]`} />
+          <h3>{p.name}</h3>
+          <p>{p.pitch}</p>
+        </a>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .work {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-top: clamp(104px, 13vw, 160px);
+  }
+  h2 {
+    font-size: clamp(40px, 5.6vw, 80px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px 32px;
+  }
+  .project {
+    flex: 1 1 480px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  h3 {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+  .project:hover h3 {
+    color: var(--petrol);
+  }
+  p {
+    font-size: 19px;
+    color: var(--ink-2);
+  }
+</style>

@@ -1,0 +1,41 @@
+---
+import MediaSlot from './MediaSlot.astro';
+import hero from '../assets/david/hero.jpg';
+import { site } from '../data/site';
+---
+
+<section id="top" class="hero">
+  <span class="role">{site.role}</span>
+  <h1>{site.headline[0]}<br />{site.headline[1]}</h1>
+  <MediaSlot
+    image={hero}
+    alt="David Cueva smiling at the camera"
+    ratio="16 / 9"
+    radius={32}
+    sizes="(min-width: 1440px) 1344px, 100vw"
+    clip="Clip 01 · David walks in and sits down to work"
+  />
+</section>
+
+<style>
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding-top: 40px;
+  }
+  .role {
+    font-family: 'Geist Mono Variable', ui-monospace, monospace;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--petrol);
+  }
+  h1 {
+    font-size: clamp(52px, 8.6vw, 124px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+  }
+</style>

@@ -1,0 +1,67 @@
+---
+import Logo from './Logo.astro';
+import { site } from '../data/site';
+
+const links = [
+  { label: 'Services', href: '#services' },
+  { label: 'Work', href: '#work' },
+  { label: 'Ask', href: '#chat' },
+];
+---
+
+<header class="wrap site-header">
+  <a href="/" aria-label={`${site.name}, home`} class="home-link"><Logo /></a>
+  <nav aria-label="Main">
+    {links.map((l) => <a href={l.href} class="nav-link">{l.label}</a>)}
+    <a href={site.contactHref} class="cta">Start a project</a>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 24px;
+  }
+  .home-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    text-decoration: none;
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px clamp(20px, 2.4vw, 32px);
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-link:hover {
+    color: var(--petrol);
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: var(--petrol);
+    color: var(--bg);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .cta:hover {
+    background: var(--petrol-hover);
+  }
+</style>

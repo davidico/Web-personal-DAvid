@@ -1,0 +1,72 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  image?: ImageMetadata;
+  alt: string;
+  /** CSS aspect-ratio, e.g. "16 / 9". */
+  ratio: string;
+  /** Label for the clip that will fill this slot. */
+  clip?: string;
+  tone?: 'soft' | 'gray';
+  /** Rounded corner radius in px. */
+  radius?: number;
+  /** `sizes` attribute for the optimized image. */
+  sizes?: string;
+}
+
+const { image, alt, ratio, clip, tone = 'soft', radius = 28, sizes = '100vw' } = Astro.props;
+---
+
+<figure
+  class:list={['slot', tone, { 'has-image': image }]}
+  style={`aspect-ratio:${ratio};border-radius:${radius}px`}
+>
+  {image && <Image src={image} alt={alt} widths={[640, 1024, 1440, 2000]} sizes={sizes} />}
+  {clip && <figcaption class="clip" data-clip-slot>{clip}</figcaption>}
+</figure>
+
+<style>
+  .slot {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    min-width: 0;
+    padding: 24px;
+  }
+  .soft {
+    background: var(--bg-soft);
+  }
+  .gray {
+    background: var(--bg-gray);
+  }
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .clip {
+    position: relative;
+    font-family: 'Geist Mono Variable', ui-monospace, monospace;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .soft .clip {
+    color: var(--petrol-hover);
+  }
+  .gray .clip {
+    color: var(--ink-2);
+  }
+  .has-image .clip {
+    max-width: 100%;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--ink);
+  }
+</style>

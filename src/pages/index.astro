@@ -1,27 +1,26 @@
 ---
 import Base from '../layouts/Base.astro';
-import Logo from '../components/Logo.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Story from '../components/Story.astro';
+import Services from '../components/Services.astro';
+import Work from '../components/Work.astro';
+import Finale from '../components/Finale.astro';
+import Footer from '../components/Footer.astro';
 ---
 
 <Base
   title="David Cueva · Webflow & JavaScript expert"
   description="David Cueva, Webflow & JavaScript expert in Berlin. You bring your business. I make it live."
 >
-  <header class="wrap site-header">
-    <a href="/" aria-label="David Cueva, home" class="home-link"><Logo /></a>
-  </header>
+  <Header />
+  <main class="wrap">
+    <Hero />
+    <Story />
+    <section id="chat"></section>
+    <Services />
+    <Work />
+    <Finale />
+  </main>
+  <Footer />
 </Base>
-
-<style>
-  .site-header {
-    display: flex;
-    align-items: center;
-    min-height: 80px;
-  }
-  .home-link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    text-decoration: none;
-  }
-</style>
