@@ -73,3 +73,8 @@ a {
     transform: none;
   }
 }
+
+/* Sections focused by motion.ts after an anchor scroll: no ring on the section itself. */
+[data-anchor-focus]:focus {
+  outline: none;
+}

@@ -43,11 +43,26 @@ function bindAnchors(lenis: Lenis): void {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     const link = (e.target as Element | null)?.closest?.('a[href^="#"]');
     if (!(link instanceof HTMLAnchorElement) || link.hash.length < 2) return;
-    const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+    let id: string;
+    try {
+      id = decodeURIComponent(link.hash.slice(1));
+    } catch {
+      return; // malformed % sequence: leave it to the browser
+    }
+    const target = document.getElementById(id);
     if (!target) return;
     e.preventDefault();
     history.pushState(null, '', link.hash);
-    lenis.scrollTo(target);
+    // Like a native fragment jump, move the sequential-focus start to the target.
+    lenis.scrollTo(target, {
+      onComplete: () => {
+        if (!target.hasAttribute('tabindex')) {
+          target.setAttribute('tabindex', '-1');
+          target.setAttribute('data-anchor-focus', '');
+        }
+        target.focus({ preventScroll: true });
+      },
+    });
   });
 }
 
