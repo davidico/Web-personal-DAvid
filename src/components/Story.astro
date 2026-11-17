@@ -6,11 +6,11 @@ const frames = ['He opens the laptop.', 'The screen fills the page.', 'Your webs
 ---
 
 <section id="story" class="story">
-  <h2>{site.statement}</h2>
+  <h2 data-reveal>{site.statement}</h2>
   <div class="frames">
     {
       frames.map((caption) => (
-        <div class="frame">
+        <div class="frame" data-reveal>
           <MediaSlot alt="" ratio="4 / 5" clip="Clip 02 · frame" />
           <p>{caption}</p>
         </div>

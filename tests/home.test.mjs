@@ -16,7 +16,9 @@ after(async () => {
 
 test('home: secciones y titulares en orden', async () => {
   await page.goto(url);
-  const hs = await page.locator('main h1, main h2').allInnerTexts();
+  // The h1 is split letter by letter; its accessible text lives in aria-label.
+  const hs = await page.locator('main h1, main h2')
+    .evaluateAll(els => els.map(e => (e.tagName === 'H1' ? e.getAttribute('aria-label') : e.innerText)));
   assert.deepEqual(hs.map(t => t.replace(/\s+/g, ' ').trim()), [
     'You bring your business. I make it live.',
     'Everything tailored to your needs.',

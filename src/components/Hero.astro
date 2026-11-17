@@ -6,7 +6,7 @@ import { site } from '../data/site';
 
 <section id="top" class="hero">
   <span class="role">{site.role}</span>
-  <h1>{site.headline[0]}<br />{site.headline[1]}</h1>
+  <h1 data-split aria-label={site.headline.join(' ')}>{site.headline[0]}<br />{site.headline[1]}</h1>
   <MediaSlot
     image={hero}
     alt="David Cueva smiling at the camera"
