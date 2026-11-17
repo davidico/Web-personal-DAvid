@@ -1,7 +1,7 @@
 export const site = {
   name: 'David Cueva',
   role: 'Webflow & JavaScript expert · Berlin',
-  headline: ['You bring your business.', 'I make it live.'] as [string, string],
+  headline: ['You focus on your product.', 'I handle your digital presence.'] as [string, string],
   statement: 'Everything tailored to your needs.',
   contactHref: '#contact',
 } as const;

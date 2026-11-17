@@ -25,7 +25,7 @@ test('motion: al recorrer la página todo acaba visible', async () => {
 });
 test('motion: el titular conserva su texto accesible', async () => {
   await page.goto(url);
-  assert.equal(await page.getAttribute('h1', 'aria-label'), 'You bring your business. I make it live.');
+  assert.equal(await page.getAttribute('h1', 'aria-label'), 'You focus on your product. I handle your digital presence.');
 });
 test('motion: con movimiento reducido nada se oculta ni se transforma', async () => {
   const { page: p, browser } = await newPage({ seen: true, reducedMotion: 'reduce' });

@@ -20,7 +20,7 @@ test('home: secciones y titulares en orden', async () => {
   const hs = await page.locator('main h1, main h2')
     .evaluateAll(els => els.map(e => (e.tagName === 'H1' ? e.getAttribute('aria-label') : e.innerText)));
   assert.deepEqual(hs.map(t => t.replace(/\s+/g, ' ').trim()), [
-    'You bring your business. I make it live.',
+    'You focus on your product. I handle your digital presence.',
     'Everything tailored to your needs.',
     'Ask me anything.',
     'Web development', 'Photo shoots', 'Video editing',
