@@ -5,6 +5,7 @@ import '@fontsource/inter/500.css';
 import '@fontsource/inter/600.css';
 import '../styles/tokens.css';
 import '../styles/global.css';
+import Intro from '../components/Intro.astro';
 
 interface Props {
   title: string;
@@ -25,8 +26,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#2f5d62" />
+    <script is:inline>
+      (function () {
+        var seen = null;
+        try {
+          seen = localStorage.getItem('dc-intro-seen');
+        } catch (e) {}
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches && seen === null && !location.hash) {
+          document.documentElement.classList.add('intro');
+        }
+      })();
+    </script>
   </head>
   <body>
+    <Intro />
     <slot />
   </body>
 </html>

@@ -7,7 +7,7 @@ let server, url, browser, page;
 before(async () => {
   server = await startPreview();
   url = server.url;
-  ({ browser, page } = await newPage());
+  ({ browser, page } = await newPage({ seen: true }));
 });
 after(async () => {
   await browser?.close();

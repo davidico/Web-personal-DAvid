@@ -52,11 +52,23 @@ export async function startPreview() {
   };
 }
 
-/** Launches Playwright Chromium; `opts` goes to browser.newContext. */
-export async function newPage(opts) {
+/**
+ * Launches Playwright Chromium; `opts` goes to browser.newContext.
+ * `seen: true` marks the intro as already seen, so pages load lit.
+ */
+export async function newPage({ seen = false, ...opts } = {}) {
   const { chromium } = require('playwright');
   const browser = await chromium.launch();
   const context = await browser.newContext(opts);
+  if (seen) {
+    await context.addInitScript(() => {
+      try {
+        localStorage.setItem('dc-intro-seen', '1');
+      } catch {
+        // storage unavailable: nothing to mark
+      }
+    });
+  }
   const page = await context.newPage();
   return { browser, context, page };
 }

@@ -1,0 +1,118 @@
+---
+// "Turn on the light" intro. Only shown when the inline <head> script in
+// Base.astro adds `intro` to <html>; without JavaScript it never appears.
+---
+
+<div id="intro">
+  <div class="spot">
+    <span class="ring ring-outer" aria-hidden="true"></span>
+    <span class="ring ring-inner" aria-hidden="true"></span>
+    <button id="intro-switch" type="button" aria-label="Turn on the light">
+      <svg
+        aria-hidden="true"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.4"
+        stroke-linecap="round"
+      >
+        <path d="M12 3v9"></path>
+        <path d="M6.4 6.4a8 8 0 1 0 11.2 0"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  import { initIntro } from '../scripts/intro';
+  initIntro();
+</script>
+
+<style>
+  #intro {
+    display: none;
+  }
+
+  :global(html.intro) #intro {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: var(--dark);
+  }
+
+  :global(html.intro) :global(body) {
+    overflow: hidden;
+  }
+
+  .spot {
+    position: absolute;
+    left: 32%;
+    bottom: 26%;
+    width: 56px;
+    height: 56px;
+  }
+
+  #intro-switch {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  #intro-switch:focus-visible {
+    outline: 2px solid var(--cream);
+    outline-offset: 4px;
+  }
+
+  .ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: flicker 2.4s ease-in-out infinite;
+  }
+
+  .ring-outer {
+    width: 122px;
+    height: 122px;
+    border: 1px solid var(--gold-text);
+  }
+
+  .ring-inner {
+    width: 86px;
+    height: 86px;
+    border: 1px solid #c9a646;
+    animation-delay: 0.6s;
+  }
+
+  @keyframes flicker {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.25;
+    }
+  }
+
+  @media (max-width: 599px) {
+    .spot {
+      left: 50%;
+      bottom: 22%;
+      transform: translateX(-50%);
+    }
+  }
+</style>
