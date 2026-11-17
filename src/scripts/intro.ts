@@ -42,6 +42,35 @@ function circle(w: number, h: number, cx: number, cy: number, r: number): string
   return `path(evenodd, "M0 0H${w}V${h}H0Z M${cx - r} ${cy}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0Z")`;
 }
 
+/** Hole edge as a share of the halo's radius: the halo reaches 12 % past the edge. */
+const GLOW_SPILL = 1.12;
+
+/**
+ * Decorative warm band (styled in Intro.astro) that grows with the same timing as
+ * the clip-path hole, so it stays on the hole's edge, and fades out at the end.
+ */
+function halo(cx: number, cy: number, r: number, duration: number, easing: string): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.id = 'intro-glow';
+  wrap.setAttribute('aria-hidden', 'true');
+  const disc = document.createElement('span');
+  const size = 2 * r * GLOW_SPILL;
+  disc.style.width = disc.style.height = `${size}px`;
+  disc.style.left = `${cx - size / 2}px`;
+  disc.style.top = `${cy - size / 2}px`;
+  wrap.append(disc);
+  document.body.append(wrap);
+  disc.animate(
+    [
+      { transform: 'scale(0)', opacity: 1 },
+      { opacity: 1, offset: 0.85 },
+      { transform: 'scale(1)', opacity: 0 },
+    ],
+    { duration, easing, fill: 'forwards' },
+  );
+  return wrap;
+}
+
 export function initIntro(opts: { autoMs?: number; growMs?: number } = {}): void {
   const { autoMs = 4000, growMs = 900 } = opts;
   const root = document.documentElement;
@@ -66,6 +95,7 @@ export function initIntro(opts: { autoMs?: number; growMs?: number } = {}): void
     el.setAttribute(INERT, '');
   }
 
+  let glow: HTMLElement | null = null;
   let fired = false;
   let finished = false;
   let timer = 0;
@@ -88,6 +118,8 @@ export function initIntro(opts: { autoMs?: number; growMs?: number } = {}): void
     if (finished) return;
     finished = true;
     root.classList.remove('intro', 'intro-lighting');
+    glow?.remove();
+    glow = null;
     for (const el of Array.from(document.querySelectorAll(`[${INERT}]`))) {
       el.removeAttribute('inert');
       el.removeAttribute(INERT);
@@ -122,9 +154,11 @@ export function initIntro(opts: { autoMs?: number; growMs?: number } = {}): void
       finish();
       return;
     }
+    const easing = 'cubic-bezier(0.4, 0, 0.2, 1)';
+    glow = halo(cx, cy, r, growMs, easing);
     const anim = layer!.animate([{ clipPath: circle(w, h, cx, cy, 0) }, { clipPath: circle(w, h, cx, cy, r) }], {
       duration: growMs,
-      easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      easing,
       fill: 'forwards',
     });
     const end = () => {

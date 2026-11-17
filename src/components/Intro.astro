@@ -43,6 +43,33 @@
     background: var(--dark);
   }
 
+  /* Warm halo on the edge of the light circle; intro.ts adds it while lighting
+     and removes it when the intro ends. The circle is sized to the final hole
+     radius plus 12 %, so with scale(s) the hole edge (89.3 % of its radius)
+     always sits inside the solid dark-warm band, which hides the hard clip edge. */
+  :global(#intro-glow) {
+    position: fixed;
+    inset: 0;
+    z-index: 1001;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  :global(#intro-glow > span) {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle closest-side,
+      transparent 50%,
+      color-mix(in srgb, var(--cream) 70%, transparent) 65%,
+      var(--glow-gold) 77%,
+      var(--glow-dark) 86.5%,
+      var(--glow-dark) 92%,
+      transparent 100%
+    );
+    will-change: transform, opacity;
+  }
+
   :global(html.intro) :global(body) {
     overflow: hidden;
   }

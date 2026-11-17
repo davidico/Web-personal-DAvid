@@ -188,3 +188,43 @@ for (const p of ['impressum', 'privacy']) {
     assert.equal(await page.evaluate(() => localStorage.getItem('dc-intro-seen')), null);
   });
 }
+test('intro: al encender, un halo cálido acompaña el borde y desaparece al terminar', async () => {
+  await page.goto(url);
+  await page.click('#intro-switch');
+  const glow = await page.evaluate(() => {
+    const el = document.getElementById('intro-glow');
+    if (!el) return null;
+    const s = getComputedStyle(el);
+    const r = el.getBoundingClientRect();
+    return {
+      lighting: document.documentElement.classList.contains('intro-lighting'),
+      ariaHidden: el.getAttribute('aria-hidden'),
+      pointerEvents: s.pointerEvents,
+      display: s.display,
+      visibility: s.visibility,
+      opacity: parseFloat(s.opacity),
+      area: r.width * r.height,
+      animated: el.getAnimations({ subtree: true }).length,
+    };
+  });
+  assert.ok(glow, 'no #intro-glow while lighting');
+  assert.equal(glow.lighting, true);
+  assert.equal(glow.ariaHidden, 'true');
+  assert.equal(glow.pointerEvents, 'none');
+  assert.notEqual(glow.display, 'none');
+  assert.equal(glow.visibility, 'visible');
+  assert.ok(glow.opacity > 0);
+  assert.ok(glow.area > 0);
+  assert.ok(glow.animated > 0, 'the glow does not travel with the edge');
+  assert.equal(await page.locator('#intro-glow').isVisible(), true);
+  await page.waitForFunction(() => !document.documentElement.classList.contains('intro'), null, { timeout: 2000 });
+  assert.equal(await page.locator('#intro-glow').count(), 0);
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), await page.evaluate(() => innerWidth));
+});
+test('intro: si la animación se para, el halo no se queda en pantalla', async () => {
+  await page.goto(url);
+  await page.click('#intro-switch');
+  await page.evaluate(() => document.getAnimations().forEach(a => a.pause()));
+  await page.waitForFunction(() => !document.documentElement.classList.contains('intro'), null, { timeout: 2000 });
+  assert.equal(await page.locator('#intro-glow').count(), 0);
+});

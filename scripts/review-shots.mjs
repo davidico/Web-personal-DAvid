@@ -27,7 +27,7 @@ async function home(url, width) {
   }
 }
 
-/** First visit: the dark intro, optionally frozen halfway through the light circle. */
+/** First visit: the dark intro, optionally frozen halfway through the light circle and its halo. */
 async function intro(url, width, lighting) {
   const { browser, page } = await newPage(size(width));
   try {
@@ -42,8 +42,12 @@ async function intro(url, width, lighting) {
         if (typeof duration !== 'number' || !Number.isFinite(duration)) {
           return `the #intro animation has no numeric duration (got ${String(duration)})`;
         }
-        anim.pause();
-        anim.currentTime = duration / 2;
+        // The warm halo runs its own animation with the same timing: freeze it too.
+        const glow = document.getElementById('intro-glow')?.getAnimations({ subtree: true }) ?? [];
+        for (const a of [anim, ...glow]) {
+          a.pause();
+          a.currentTime = duration / 2;
+        }
         return null;
       });
       if (problem) throw new Error(`intro-lighting-${width}: ${problem}`);
